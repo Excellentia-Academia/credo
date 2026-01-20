@@ -1,10 +1,9 @@
-
-En t’inspirant de cette idée ; <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Module Épellation Vocal du dictionnaire - Liste Complète</title>
+  <title>Module d'Épellation Vocale avec Scores</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,11 +12,12 @@ En t’inspirant de cette idée ; <!DOCTYPE html>
       animation: gradientAnimation 15s ease infinite;
       color: #fff;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      padding: 24px;
+      padding: 20px;
     }
     @keyframes gradientAnimation {
       0% {background-position: 0% 50%;}
@@ -26,717 +26,895 @@ En t’inspirant de cette idée ; <!DOCTYPE html>
     }
     .container {
       background: rgba(255, 255, 255, 0.1);
-      padding: 32px;
+      padding: 30px;
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(12px);
-      max-width: 560px;
+      max-width: 800px;
       width: 100%;
       text-align: center;
       animation: fadeIn 1.2s ease;
+      margin-bottom: 20px;
     }
     @keyframes fadeIn { from {opacity: 0; transform: translateY(15px);} to {opacity: 1; transform: translateY(0);} }
 
-    h1 { font-weight: 800; margin-bottom: 12px; font-size: 2rem; text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); }
-    #wordDisplay { font-size: 2.2rem; font-weight: bold; letter-spacing: 0.15em; margin: 14px 0 18px; min-height: 50px; }
-
-    .page-controls {
-      display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin: 8px 0 16px;
+    h1 { 
+      font-weight: 800; 
+      margin-bottom: 20px; 
+      font-size: 2.2rem; 
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); 
+      background: linear-gradient(90deg, #fff, #6a11cb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .page-controls button, .page-controls select {
-      padding: 10px; border-radius: 10px; border: none; font-size: 1rem; background:#fff; color:#2575fc;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;
+    
+    /* Section profil */
+    .profile-section {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      text-align: left;
     }
-    .page-controls button:hover { background:#2575fc; color:#fff; box-shadow:0 0 12px #ffffff99, 0 0 18px #2575fcaa; }
-
-    #progress { font-size: 0.95rem; margin-bottom: 8px; opacity: 0.95; }
-
-    input[type="text"] {
-      font-size: 1.2rem; padding: 14px; border-radius: 10px; border: none; width: 100%; margin: 10px 0 16px;
-      background-color:#fff; color:#333; outline:none; transition: all 0.3s ease;
-    }
-    input[type="text"]:focus { box-shadow: 0 0 10px #2575fc; caret-color: #2575fc; }
-
-    .buttons {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px;
-    }
-    button {
-      flex: 1 1 40%;
-      padding: 12px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      background: #fff;
-      color: #2575fc;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    button:hover {
-      background: #2575fc;
-      color: #fff;
-      box-shadow: 0 0 12px #ffffff99, 0 0 18px #2575fcaa;
-    }
-    #message {
-      margin-top: 18px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      min-height: 32px;
-      transition: color 0.3s ease;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Épellation vocale des mots du dictionnaire</h1>
-
-    <!-- Contrôles de pagination -->
-    <div class="page-controls">
-      <button id="btnPrevPage" title="Page précédente">⟵ Page</button>
-      <div>
-        Page <select id="pageSelect"></select><span id="totalPagesLabel"></span>
-      </div>
-      <button id="btnNextPage" title="Page suivante">Page ⟶</button>
-    </div>
-
-    <div id="progress">Question — / 10 (page —)</div>
-    <div id="wordDisplay">Mot à écouter</div>
-
-    <input type="text" id="answer" placeholder="Écris le mot ici..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    <div class="buttons">
-      <button id="btnPlay">▶️ Jouer</button>
-      <button id="btnSlow">🐢 Ralentir</button>
-      <button id="btnFast">🐇 Accélérer</button>
-      <button id="btnRepeat">🔁 Répéter</button>
-      <button id="btnSkip">⏭ Passer</button>
-      <button id="btnBack">⬅️ Retour</button>
-    </div>
-    <div id="message"></div>
-  </div>
-
-  <script>
-    const words = [
-      "autel","bataille","chômage","documentaire","étang","force","gazouiller","hache",
-      "atome","bibliographie","crustacé","documentaliste","érosion","fantastique","gamète","hormone",
-      "altercation","bipède","conductible","dictionnaire","étiquette","fantôme","gynécologue","herbivore",
-      "acide","bourgeon","croquis","délimitation","écart","format","gentiment","harmonieux",
-      "amplitude","bidonville","cylindre","descendre","épaisseur","fonctionnement","gabarit","hypothèse",
-      "analogie","bissectrice","contrebasse","dent","égoïste","frétiller","galanterie","hypermarché",
-      "antécédent","bissextile","cyclope","désoler","équilatéral","faillite","gâchis","humanité",
-      "anaphore","bouillir","cellule","disparaître","expression","facturation","gangrène","hippopotame",
-      "antipathie","botanique","cancer","dollar","esquisse","fluidifier","galipette","hirondelle",
-      "archéologie","bonheur","câble","doigt","emprunt","fœtus","gargouiller","heurter",
-      "anticorps","banquette","chronologie","déesse","enceinte","fanfare","garde-robe","honnêteté",
-      "anatomie","bientôt","compas","devis","électron","fertilité","gencive",
-      "aquatique","bicyclette","calomnie","déduction","éclipse","furieux","généralement","illustrateur",
-      "anecdote","baptême","chorale","développement","euphorie","frayeur","gentillesse","inflation",
-      "abonnement","bégayer","corail","différemment","euphémisme","fugitif","ghetto","impersonnel",
-      "absence","barbecue","concentration","dégradation","extinction","fraiseuse","glaciaire","isoloir",
-      "abréger","bactérie","carambolage","discriminatoire","équerre","fabuleux","index",
-      "abyme","bracelet","concubin","différencier","ébauche","fainéant","harceler","intérieur",
-      "accueil","boulangère","conteneur","délocalisation","ébène","faisable","happer","industrie",
-      "actuellement","brûler","cadenasser","démangeaison","épithète","falsifier","handicap","impression",
-      "adhésion","baroque","chromosome","dilemme","estomac","favoritisme","homogène","insecte",
-      "agenda","boulevard","compas","désarroi","épilogue","humain","information",
-      "affliger","banquise","circonflexe","dinosaure","épicentre","géologue","harpie","indigo",
-      "allégorie","bourgeonner","contraception","dissolution","effigie","gestionnaire","hamster","intolérance",
-      "anesthésie","bain-marie","contemporain","démagogie","emboîter","gouache","humain","infinitif",
-      "antiquaire","bafouer","commettre","douillet","écarquiller","gravitation","hectare","inondation",
-      "apostrophe","barrette","coefficient","droiture","graffiti","hypoténuse","induction",
-      "apparaître","boycotter","confidentialité","dubitatif","fécondation","géant","hauteur","impulsion",
-"landau","mosaïque","natation","orchestre","pitoyable","recueil","technique",
-      "lauréat","mégalopole","naturalisation","oxymore","périlleux","renouement","tiède",
-      "licenciement","métropole","neutre","oreillette","périodique","radioactif","théâtre",
-      "littérature","messagerie","nostalgie","opaque","péremption","référendum","tangente",
-      "lutter","motion","natalité","omniscient","royaume","tolérance",
-      "lettre","molécules","nature","occurrence","quiproquo","renouvelable","thèse",
-      "liberté","mouvement","nombre","œsophage","quotient","théorème",
-      "laïque","mangrove","navire","orthodoxe","quart","sceau","tonalité",
-      "localisation","messager","nuque","obèse","quatuor","scénario","toile",
-      "lexical","méthode","nuisance","quotidien","salaire","thème",
-      "législatif","merveille","numérique","pyramide","qualificatif","syndrome","tourment",
-      "lutte","méchanceté","nuageux","parenthèse","quelconque","stylistique","temps"
-    ];
-
-    /* === Pagination === */
-    const pageSize = 10;
-    const totalPages = Math.ceil(words.length / pageSize);
-    let currentPage = 1;         // 1-indexed
-    let currentWordIndex = 0;    // index global dans words
-    let speechRate = 1;
-
-    /* === DOM === */
-    const wordDisplay = document.getElementById("wordDisplay");
-    const answerInput = document.getElementById("answer");
-    const message = document.getElementById("message");
-    const btnPlay = document.getElementById("btnPlay");
-    const btnSlow = document.getElementById("btnSlow");
-    const btnFast = document.getElementById("btnFast");
-    const btnRepeat = document.getElementById("btnRepeat");
-    const btnSkip = document.getElementById("btnSkip");
-    const btnBack = document.getElementById("btnBack");
-    const progress = document.getElementById("progress");
-    const pageSelect = document.getElementById("pageSelect");
-    const btnPrevPage = document.getElementById("btnPrevPage");
-    const btnNextPage = document.getElementById("btnNextPage");
-    const totalPagesLabel = document.getElementById("totalPagesLabel");
-
-    /* === Helpers pagination === */
-    function pageStartIndex(page){ return (page-1)*pageSize; }
-    function pageEndIndex(page){ return Math.min(page*pageSize - 1, words.length - 1); }
-    function indexInCurrentPage(){ return currentWordIndex - pageStartIndex(currentPage); }
-
-    function updateProgress(){
-      const pos = indexInCurrentPage() + 1;
-      const end = pageEndIndex(currentPage) - pageStartIndex(currentPage) + 1; // 10 sauf dernière page
-      progress.textContent = `Question ${pos}/${end} (page ${currentPage}/${totalPages})`;
-    }
-
-    function updatePageSelect(){
-      pageSelect.innerHTML = "";
-      for(let p=1; p<=totalPages; p++){
-        const opt = document.createElement("option");
-        opt.value = String(p);
-        opt.textContent = p;
-        if (p === currentPage) opt.selected = true;
-        pageSelect.appendChild(opt);
-      }
-      totalPagesLabel.textContent = ` / ${totalPages}`;
-    }
-
-    /* === Synthèse vocale === */
-    function speakWord(word, rate = speechRate) {
-      if (!('speechSynthesis' in window)) {
-        message.textContent = "La synthèse vocale n'est pas prise en charge sur ce navigateur.";
-        return;
-      }
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = "fr-FR";
-      utterance.rate = rate;
-      speechSynthesis.speak(utterance);
-    }
-
-    /* === Jeu === */
-    function playWord() {
-      const word = words[currentWordIndex];
-      wordDisplay.textContent = "";
-      speakWord(word);
-      message.textContent = "Écoutez attentivement et écrivez le mot.";
-      message.style.color = "#fff";
-      answerInput.value = "";
-      answerInput.disabled = false;
-      answerInput.focus();
-      updateProgress();
-    }
-
-    function playWordSlow() { speechRate = Math.max(0.5, speechRate - 0.25); playWord(); }
-    function playWordFast() { speechRate = Math.min(2, speechRate + 0.25); playWord(); }
-    function repeatWord()   { playWord(); }
-
-    function normalize(str){
-      return str.trim().toLowerCase();
-    }
-
-    function checkAnswer() {
-      const userAnswer = normalize(answerInput.value);
-      const correctAnswer = normalize(words[currentWordIndex]);
-      if (userAnswer === correctAnswer) {
-        message.textContent = "✅ Correct !";
-        message.style.color = "#00e676";
-        wordDisplay.textContent = correctAnswer;
-        setTimeout(() => { nextWord(); }, 900);
-      } else {
-        message.textContent = "❌ Incorrect, écoutez l'orthographe lettre par lettre.";
-        message.style.color = "#ff5252";
-        spellWord(correctAnswer);
-      }
-    }
-
-    function spellWord(word) {
-      speechSynthesis.cancel();
-      let letters = [...word.replace(/[-\s]/g, "")];
-      let i = 0;
-      function spellNext() {
-        if (i < letters.length) {
-          const utterance = new SpeechSynthesisUtterance(letters[i]);
-          utterance.lang = "fr-FR";
-          utterance.rate = 0.6;
-          utterance.onend = () => {
-            i++;
-            setTimeout(spellNext, 350);
-          };
-          speechSynthesis.speak(utterance);
-        } else {
-          message.textContent = "Réessayez d'écrire le mot.";
-          message.style.color = "#fff";
-          answerInput.value = "";
-          answerInput.focus();
-        }
-      }
-      spellNext();
-    }
-
-    function nextWord() {
-      const end = pageEndIndex(currentPage);
-      if (currentWordIndex < end) {
-        currentWordIndex++;
-        playWord();
-      } else {
-        message.textContent = `🎉 Fin de la page ${currentPage}. Choisissez une autre page pour continuer.`;
-        answerInput.disabled = true;
-      }
-    }
-
-    function prevWord() {
-      const start = pageStartIndex(currentPage);
-      if (currentWordIndex > start) {
-        currentWordIndex--;
-        message.textContent = "";
-        playWord();
-      }
-    }
-
-    /* === Navigation de pages === */
-    function goToPage(p){
-      const page = Math.max(1, Math.min(totalPages, p));
-      currentPage = page;
-      currentWordIndex = pageStartIndex(currentPage);
-      updatePageSelect();
-      message.textContent = "";
-      playWord();
-    }
-
-    btnPrevPage.addEventListener("click", () => {
-      if (currentPage > 1) goToPage(currentPage - 1);
-    });
-    btnNextPage.addEventListener("click", () => {
-      if (currentPage < totalPages) goToPage(currentPage + 1);
-    });
-    pageSelect.addEventListener("change", (e) => {
-      const p = parseInt(e.target.value, 10);
-      goToPage(p);
-    });
-
-    /* === Boutons === */
-    btnBack.addEventListener("click", prevWord);
-    btnPlay.addEventListener("click", playWord);
-    btnSlow.addEventListener("click", playWordSlow);
-    btnFast.addEventListener("click", playWordFast);
-    btnRepeat.addEventListener("click", repeatWord);
-    btnSkip.addEventListener("click", nextWord);
-
-    answerInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") checkAnswer();
-    });
-
-    /* === Démarrage === */
-    updatePageSelect();
-    window.addEventListener("load", () => goToPage(1));
-  </script>
-</body>
-</html>
-
-Fais en sorte que ça puisse être un type d’exercices mais que ça puisse rajouter un enregistrement des scores à travers le profil comme ça existe déjà ici ; <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Module Épellation Vocal du dictionnaire - Liste Complète</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(270deg, #6a11cb, #2575fc, #6a11cb);
-      background-size: 600% 600%;
-      animation: gradientAnimation 15s ease infinite;
-      color: #fff;
+    
+    .profile-header {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 24px;
+      margin-bottom: 15px;
     }
-    @keyframes gradientAnimation {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
-    .container {
+    
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .total-score {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00e676;
+      text-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+    }
+    
+    /* Barre de stats */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .stat-card {
       background: rgba(255, 255, 255, 0.1);
-      padding: 32px;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(12px);
-      max-width: 560px;
-      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
       text-align: center;
-      animation: fadeIn 1.2s ease;
+      transition: transform 0.3s ease;
     }
-    @keyframes fadeIn { from {opacity: 0; transform: translateY(15px);} to {opacity: 1; transform: translateY(0);} }
-
-    h1 { font-weight: 800; margin-bottom: 12px; font-size: 2rem; text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); }
-    #wordDisplay { font-size: 2.2rem; font-weight: bold; letter-spacing: 0.15em; margin: 14px 0 18px; min-height: 50px; }
-
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    #wordDisplay { 
+      font-size: 2.5rem; 
+      font-weight: bold; 
+      letter-spacing: 0.15em; 
+      margin: 20px 0; 
+      min-height: 60px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .progress-section {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    
+    #progressBar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    
+    #progressFill {
+      height: 100%;
+      background: linear-gradient(90deg, #00e676, #00c853);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    
     .page-controls {
-      display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin: 8px 0 16px;
+      display: grid; 
+      grid-template-columns: 1fr auto 1fr; 
+      gap: 15px; 
+      align-items: center; 
+      margin: 20px 0;
     }
+    
     .page-controls button, .page-controls select {
-      padding: 10px; border-radius: 10px; border: none; font-size: 1rem; background:#fff; color:#2575fc;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;
-    }
-    .page-controls button:hover { background:#2575fc; color:#fff; box-shadow:0 0 12px #ffffff99, 0 0 18px #2575fcaa; }
-
-    #progress { font-size: 0.95rem; margin-bottom: 8px; opacity: 0.95; }
-
-    input[type="text"] {
-      font-size: 1.2rem; padding: 14px; border-radius: 10px; border: none; width: 100%; margin: 10px 0 16px;
-      background-color:#fff; color:#333; outline:none; transition: all 0.3s ease;
-    }
-    input[type="text"]:focus { box-shadow: 0 0 10px #2575fc; caret-color: #2575fc; }
-
-    .buttons {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px;
-    }
-    button {
-      flex: 1 1 40%;
-      padding: 12px;
-      font-size: 1.05rem;
+      padding: 12px 20px; 
+      border-radius: 10px; 
+      border: none; 
+      font-size: 1rem; 
       font-weight: 600;
-      border-radius: 10px;
+      background: #fff; 
+      color: #2575fc;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .page-controls button:hover { 
+      background: #2575fc; 
+      color: #fff; 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 117, 252, 0.4); 
+    }
+    
+    .page-controls select {
+      padding: 11px 20px;
+    }
+    
+    input[type="text"] {
+      font-size: 1.3rem; 
+      padding: 16px 20px; 
+      border-radius: 12px; 
+      border: 2px solid transparent; 
+      width: 100%; 
+      margin: 20px 0;
+      background-color: rgba(255, 255, 255, 0.95); 
+      color: #333; 
+      outline: none; 
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    input[type="text"]:focus { 
+      border-color: #2575fc;
+      box-shadow: 0 0 20px rgba(37, 117, 252, 0.3); 
+      transform: translateY(-2px);
+    }
+    
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+    
+    .controls-grid button {
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.95);
       color: #2575fc;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    button:hover {
+    
+    .controls-grid button:hover {
       background: #2575fc;
       color: #fff;
-      box-shadow: 0 0 12px #ffffff99, 0 0 18px #2575fcaa;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(37, 117, 252, 0.4);
     }
+    
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    #btnSaveScore {
+      background: linear-gradient(135deg, #00e676, #00c853);
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    #btnNewSession {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
     #message {
-      margin-top: 18px;
-      font-size: 1.05rem;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1.1rem;
       font-weight: 600;
-      min-height: 32px;
-      transition: color 0.3s ease;
+      min-height: 50px;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .score-history {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 25px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .score-history h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #00e676;
+    }
+    
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .history-score {
+      font-weight: bold;
+      color: #00e676;
+    }
+    
+    .history-date {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .page-controls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      #wordDisplay {
+        font-size: 2rem;
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Épellation vocale des mots du dictionnaire</h1>
-
+    <!-- Section Profil -->
+    <div class="profile-section">
+      <div class="profile-header">
+        <div class="user-info">
+          <div class="avatar" id="userAvatar">JD</div>
+          <div>
+            <h2 id="userName">Jean Dupont</h2>
+            <p id="userLevel">Niveau: Débutant</p>
+          </div>
+        </div>
+        <div class="total-score" id="totalScore">0</div>
+      </div>
+      <div class="stats-bar" id="globalStats">
+        <!-- Rempli par JavaScript -->
+      </div>
+    </div>
+    
+    <h1>🎯 Exercice d'Épellation Vocale</h1>
+    
     <!-- Contrôles de pagination -->
     <div class="page-controls">
-      <button id="btnPrevPage" title="Page précédente">⟵ Page</button>
+      <button id="btnPrevPage" title="Page précédente">⟵ Page Précédente</button>
       <div>
         Page <select id="pageSelect"></select><span id="totalPagesLabel"></span>
       </div>
-      <button id="btnNextPage" title="Page suivante">Page ⟶</button>
+      <button id="btnNextPage" title="Page suivante">Page Suivante ⟶</button>
     </div>
-
-    <div id="progress">Question — / 10 (page —)</div>
-    <div id="wordDisplay">Mot à écouter</div>
-
-    <input type="text" id="answer" placeholder="Écris le mot ici..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    <div class="buttons">
+    
+    <!-- Barre de progression -->
+    <div class="progress-section">
+      <div id="progress">Question — / 10 (page —)</div>
+      <div id="progressBar">
+        <div id="progressFill"></div>
+      </div>
+    </div>
+    
+    <!-- Affichage du mot -->
+    <div id="wordDisplay">Mot à écouter...</div>
+    
+    <!-- Zone de saisie -->
+    <input type="text" id="answer" placeholder="Écris le mot que tu as entendu..." 
+           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    
+    <!-- Contrôles principaux -->
+    <div class="controls-grid">
       <button id="btnPlay">▶️ Jouer</button>
       <button id="btnSlow">🐢 Ralentir</button>
       <button id="btnFast">🐇 Accélérer</button>
       <button id="btnRepeat">🔁 Répéter</button>
       <button id="btnSkip">⏭ Passer</button>
-      <button id="btnBack">⬅️ Retour</button>
+      <button id="btnHint">💡 Indice</button>
     </div>
-    <div id="message"></div>
+    
+    <!-- Boutons d'action -->
+    <div class="action-buttons">
+      <button id="btnSaveScore">💾 Enregistrer Score</button>
+      <button id="btnNewSession">🔄 Nouvelle Session</button>
+    </div>
+    
+    <!-- Messages -->
+    <div id="message">Prêt à commencer ! Cliquez sur "Jouer" pour entendre le premier mot.</div>
+    
+    <!-- Historique des scores -->
+    <div class="score-history" id="scoreHistory">
+      <h3>📊 Historique des Scores</h3>
+      <div id="historyList">
+        <!-- Rempli par JavaScript -->
+      </div>
+    </div>
   </div>
 
   <script>
+    // ==================== DONNÉES ====================
     const words = [
-      "autel","bataille","chômage","documentaire","étang","force","gazouiller","hache",
-      "atome","bibliographie","crustacé","documentaliste","érosion","fantastique","gamète","hormone",
-      "altercation","bipède","conductible","dictionnaire","étiquette","fantôme","gynécologue","herbivore",
-      "acide","bourgeon","croquis","délimitation","écart","format","gentiment","harmonieux",
-      "amplitude","bidonville","cylindre","descendre","épaisseur","fonctionnement","gabarit","hypothèse",
-      "analogie","bissectrice","contrebasse","dent","égoïste","frétiller","galanterie","hypermarché",
-      "antécédent","bissextile","cyclope","désoler","équilatéral","faillite","gâchis","humanité",
-      "anaphore","bouillir","cellule","disparaître","expression","facturation","gangrène","hippopotame",
-      "antipathie","botanique","cancer","dollar","esquisse","fluidifier","galipette","hirondelle",
-      "archéologie","bonheur","câble","doigt","emprunt","fœtus","gargouiller","heurter",
-      "anticorps","banquette","chronologie","déesse","enceinte","fanfare","garde-robe","honnêteté",
-      "anatomie","bientôt","compas","devis","électron","fertilité","gencive",
-      "aquatique","bicyclette","calomnie","déduction","éclipse","furieux","généralement","illustrateur",
-      "anecdote","baptême","chorale","développement","euphorie","frayeur","gentillesse","inflation",
-      "abonnement","bégayer","corail","différemment","euphémisme","fugitif","ghetto","impersonnel",
-      "absence","barbecue","concentration","dégradation","extinction","fraiseuse","glaciaire","isoloir",
-      "abréger","bactérie","carambolage","discriminatoire","équerre","fabuleux","index",
-      "abyme","bracelet","concubin","différencier","ébauche","fainéant","harceler","intérieur",
-      "accueil","boulangère","conteneur","délocalisation","ébène","faisable","happer","industrie",
-      "actuellement","brûler","cadenasser","démangeaison","épithète","falsifier","handicap","impression",
-      "adhésion","baroque","chromosome","dilemme","estomac","favoritisme","homogène","insecte",
-      "agenda","boulevard","compas","désarroi","épilogue","humain","information",
-      "affliger","banquise","circonflexe","dinosaure","épicentre","géologue","harpie","indigo",
-      "allégorie","bourgeonner","contraception","dissolution","effigie","gestionnaire","hamster","intolérance",
-      "anesthésie","bain-marie","contemporain","démagogie","emboîter","gouache","humain","infinitif",
-      "antiquaire","bafouer","commettre","douillet","écarquiller","gravitation","hectare","inondation",
-      "apostrophe","barrette","coefficient","droiture","graffiti","hypoténuse","induction",
-      "apparaître","boycotter","confidentialité","dubitatif","fécondation","géant","hauteur","impulsion",
-      "agglomération","bouilloire","caoutchouc","durablement","fréquence","gestion","horticulture","intéressant",
-      "amertume","bizutage","chronomètre","dyslexie","fossile","génocide","hiérarchie","isocèle",
-      "assiduité","balbutier","cynique","dorénavant","fusain","grammaire","hypocrisie","internet",
-      "allégresse","bouddhisme","claustrophobe","faille","genre","hydratant","illusion",
-      "appendice","biodiversité","crainte","écho","fasciste","gradation","homicide","invention",
-      "adjacent","bioclimatique","couveuse","échapper","fascination","gouvernement","hasard","impair",
-      "antisémitisme","banlieue","couvre-feu","échéance","fresque","grenade","hibiscus","interrogation",
-      "asphyxie","biennale","craquement","emphatique","faisceau","graphisme","hostile","inoubliable",
-      "anonyme","bienfait","entreprise","fédération","grenouillère","harmonie","incorrigible",
-      "anaconda","bifteck","débris","esclavage","famine","griffon","hospitalier","importer",
-      "auparavant","bimestriel","décontracté","endurance","friable","gesticuler","herse","innocent",
-      "accumulation","bistouri","décennie","emploi","fréquence","guitariste","humanisme","ingrédient",
-      "accouplement","biochimie","décès","explicatif","formule","grappe","hiéroglyphe","infraction",
-      "acrobatie","démographie","enthousiasme","fiche","gratte-ciel","hectare","icône",
-      "affranchir","climat","devise","énonciation","fraction","gladiateur","hypoténuse","inversion",
-      "abstention","compassion","discrimination","élection","facteur","gaspillage","hyperbole","instaurer",
-      "abstinence","comparaison","dioxyde","essor","figure","gentilhomme","hommage","immortaliser",
-      "arbrisseau","calendrier","diminution","engagement","flûte","griffer","haut-parleur","intègre",
-      "calculatrice","dénouement","émeraude","fragile","guillemet","hérédité","intention",
-      "bâiller","crayon","démocratie","enzyme","fond","ginseng","homophone","iceberg",
-      "budget","contour","désodorisant","entrepôt","falloir","gymnase","héros","interrupteur",
-      "beaucoup","collectivité","dissoudre","expérience","front","grossesse","habitat","insolent",
-      "ballade","charte","distillation","espace","frapper","goût","hymne","intellectuel",
-      "bâtiment","cercueil","dérivation","étendue","fenêtre","goéland","hystérie","infaisable",
-      "intervalle","loi","marionnette","nausée","pathétique","quadruple","suffixe","travailler",
-      "illégalité","laudatif","maïpouri","navette","papyrus","quereller","syntaxé","toucher",
-      "identification","littoral","magistrat","négligence","plasticien","qualité","syndicat","toile",
-      "igloo","lyrique","mascotte","névrose","perspective","quartier","seigneur","trompette",
-      "idiotie","logique","meilleur","nœud","percussion","quitter","scène","tambourin",
-      "idolâtrer","largeur","monastère","noisette","précipiter","quadrilatère","sympathique","thérapeutique",
-      "liquide","médiatrice","nonchalance","perpendiculaire","scrutin","toupie",
-      "juxtaposition","local","millionnaire","nombril","pollution","reconnaissance","strophe","thermomètre",
-      "juge","logiciels","métamorphose","notamment","polythéiste","résistant","somme","taureau",
-      "journal","lunette","mâcher","nucléaire","poème","rayon","semaine","tyrannie",
-      "journaliste","lumière","monstrueux","nourrisson","problème","république","symphonie","terroriste",
-      "jadis","lentille","misogyne","personne","renaissance","suggestion","trapèze",
-      "jamais","liberté","migrant","orchidée","pathétique","règlement","sérieux","tressaillir",
-      "jeunesse","lieutenant","mutation","orchestration","préfixe","racisme","silencieux","trahison",
-      "justice","louveteau","mâchoire","opticien","psychologique","résultat","science","transsexuel",
-      "joyeux","ludothèque","maigreur","oxygène","président","rivière","seconde","tremplin",
-      "joie","lusophone","magnésium","orientation","prix","record","souffrir","trachée",
-      "jambe","lacérer","maillon","œil","pétrole","rectangle","sembler","transmutation",
-      "journaux","leucémie","maintien","oreille","pape","rassasier","serrer","tromper",
-      "jaunisse","littéral","majestueux","ombre","pharaon","reste","sculpture","tronçonneuse",
-      "joncher","loyer","orthographe","patin","rapporteur","souffle",
-      "jouissance","lucidité","naturel","occasionnellement","processus","relatif","sceptre","veillée",
-      "jonquille","loquace","narrateur","oser","proportion","règle","sédiment","vermeille",
-      "juvénile","labyrinthe","nouveauté","onde","peut-être","ramifier","synchroniser","vieillesse",
-      "justifier","lâcher","nouvelle","orchestre","plutôt","résolution","sceau","vidéoprojecteur",
-      "jubiler","navigateur","ordonnance","purée","ronronner","sédentaire","vainqueur",
-      "joyau","monarchie","nettoyage","opinion","plongée","rituel","sagittaire","vestiaire",
-      "joaillerie","maritime","nécessaire","obésité","polyglotte","rhétorique","sceptique","variable",
-      "jogging","monothéiste","naître","organe","péripétie","restreint","systématique","ventilation",
-      "mourir","nutrition","océan","pourcentage","rhinocéros","souverain","vociférer",
-      "kiwi","médaille","noyau","ouragan","psychopathe","récepteur","synonyme","velours",
-      "kilomètre","mondialisation","nourrir","octet","patrimoine","rayonnement","scintiller","vieillard",
-      "ketchup","musée","nénuphar","organisation","polyphonie","répertoire","subjuguer","vingtaine",
-      "klaxonner","moine","néanmoins","outil","paratexte","rancoeur","sanctuaire","verglas",
-      "kidnapper","ministre","néant","odorat","patiemment","rejoindre","sarcophage","vendange",
-      "kilowatt","mortalité","nuance","ouïe","propagande","réflexion","sonnet",
-      "kiosque","mythe","nymphe","orpaillage","pression","raquette","segment",
-      "kung-fu","médiane","noyau","œuvre","printemps","rabbin","silhouette",
-      "kermesse","mammifère","négatif","oxygène","périphérie","rétroprojecteur","statistique",
-      "métaphore","noblesse","opération","pâtisserie","relique",
-      "landau","mosaïque","natation","orchestre","pitoyable","recueil","technique",
-      "lauréat","mégalopole","naturalisation","oxymore","périlleux","renouement","tiède",
-      "licenciement","métropole","neutre","oreillette","périodique","radioactif","théâtre",
-      "littérature","messagerie","nostalgie","opaque","péremption","référendum","tangente",
-      "lutter","motion","natalité","omniscient","royaume","tolérance",
-      "lettre","molécules","nature","occurrence","quiproquo","renouvelable","thèse",
-      "liberté","mouvement","nombre","œsophage","quotient","théorème",
-      "laïque","mangrove","navire","orthodoxe","quart","sceau","tonalité",
-      "localisation","messager","nuque","obèse","quatuor","scénario","toile",
-      "lexical","méthode","nuisance","quotidien","salaire","thème",
-      "législatif","merveille","numérique","pyramide","qualificatif","syndrome","tourment",
-      "lutte","méchanceté","nuageux","parenthèse","quelconque","stylistique","temps"
+      "autel", "bataille", "chômage", "documentaire", "étang", "force", "gazouiller", "hache",
+      "atome", "bibliographie", "crustacé", "documentaliste", "érosion", "fantastique", "gamète", "hormone",
+      "altercation", "bipède", "conductible", "dictionnaire", "étiquette", "fantôme", "gynécologue", "herbivore",
+      "acide", "bourgeon", "croquis", "délimitation", "écart", "format", "gentiment", "harmonieux",
+      "amplitude", "bidonville", "cylindre", "descendre", "épaisseur", "fonctionnement", "gabarit", "hypothèse",
+      "analogie", "bissectrice", "contrebasse", "dent", "égoïste", "frétiller", "galanterie", "hypermarché",
+      "antécédent", "bissextile", "cyclope", "désoler", "équilatéral", "faillite", "gâchis", "humanité",
+      "anaphore", "bouillir", "cellule", "disparaître", "expression", "facturation", "gangrène", "hippopotame"
     ];
 
-    /* === Pagination === */
+    // ==================== VARIABLES GLOBALES ====================
     const pageSize = 10;
     const totalPages = Math.ceil(words.length / pageSize);
-    let currentPage = 1;         // 1-indexed
-    let currentWordIndex = 0;    // index global dans words
+    let currentPage = 1;
+    let currentWordIndex = 0;
     let speechRate = 1;
+    let score = 0;
+    let correctAnswers = 0;
+    let totalAttempts = 0;
+    let currentStreak = 0;
+    let bestStreak = 0;
+    let sessionStartTime = null;
+    let responseTimes = [];
+    let exerciseCompleted = false;
+    let userProfile = null;
 
-    /* === DOM === */
-    const wordDisplay = document.getElementById("wordDisplay");
-    const answerInput = document.getElementById("answer");
-    const message = document.getElementById("message");
-    const btnPlay = document.getElementById("btnPlay");
-    const btnSlow = document.getElementById("btnSlow");
-    const btnFast = document.getElementById("btnFast");
-    const btnRepeat = document.getElementById("btnRepeat");
-    const btnSkip = document.getElementById("btnSkip");
-    const btnBack = document.getElementById("btnBack");
-    const progress = document.getElementById("progress");
-    const pageSelect = document.getElementById("pageSelect");
-    const btnPrevPage = document.getElementById("btnPrevPage");
-    const btnNextPage = document.getElementById("btnNextPage");
-    const totalPagesLabel = document.getElementById("totalPagesLabel");
+    // ==================== ÉLÉMENTS DOM ====================
+    const elements = {
+      wordDisplay: document.getElementById('wordDisplay'),
+      answer: document.getElementById('answer'),
+      message: document.getElementById('message'),
+      progress: document.getElementById('progress'),
+      progressFill: document.getElementById('progressFill'),
+      pageSelect: document.getElementById('pageSelect'),
+      totalPagesLabel: document.getElementById('totalPagesLabel'),
+      btnPrevPage: document.getElementById('btnPrevPage'),
+      btnNextPage: document.getElementById('btnNextPage'),
+      btnPlay: document.getElementById('btnPlay'),
+      btnSlow: document.getElementById('btnSlow'),
+      btnFast: document.getElementById('btnFast'),
+      btnRepeat: document.getElementById('btnRepeat'),
+      btnSkip: document.getElementById('btnSkip'),
+      btnHint: document.getElementById('btnHint'),
+      btnSaveScore: document.getElementById('btnSaveScore'),
+      btnNewSession: document.getElementById('btnNewSession'),
+      totalScore: document.getElementById('totalScore'),
+      globalStats: document.getElementById('globalStats'),
+      historyList: document.getElementById('historyList'),
+      userName: document.getElementById('userName'),
+      userLevel: document.getElementById('userLevel'),
+      userAvatar: document.getElementById('userAvatar')
+    };
 
-    /* === Helpers pagination === */
-    function pageStartIndex(page){ return (page-1)*pageSize; }
-    function pageEndIndex(page){ return Math.min(page*pageSize - 1, words.length - 1); }
-    function indexInCurrentPage(){ return currentWordIndex - pageStartIndex(currentPage); }
-
-    function updateProgress(){
-      const pos = indexInCurrentPage() + 1;
-      const end = pageEndIndex(currentPage) - pageStartIndex(currentPage) + 1; // 10 sauf dernière page
-      progress.textContent = `Question ${pos}/${end} (page ${currentPage}/${totalPages})`;
+    // ==================== INITIALISATION ====================
+    function init() {
+      loadUserProfile();
+      initPageSelect();
+      updateGlobalStats();
+      loadScoreHistory();
+      startNewSession();
+      
+      // Événements
+      setupEventListeners();
     }
 
-    function updatePageSelect(){
-      pageSelect.innerHTML = "";
-      for(let p=1; p<=totalPages; p++){
-        const opt = document.createElement("option");
-        opt.value = String(p);
-        opt.textContent = p;
-        if (p === currentPage) opt.selected = true;
-        pageSelect.appendChild(opt);
+    function loadUserProfile() {
+      // Charger depuis localStorage ou créer un profil par défaut
+      const savedProfile = localStorage.getItem('spellingProfile');
+      if (savedProfile) {
+        userProfile = JSON.parse(savedProfile);
+      } else {
+        userProfile = {
+          name: "Jean Dupont",
+          totalScore: 0,
+          sessions: 0,
+          totalCorrect: 0,
+          totalAttempts: 0,
+          bestScore: 0,
+          bestStreak: 0,
+          level: "Débutant",
+          joinDate: new Date().toISOString()
+        };
+        saveProfile();
       }
-      totalPagesLabel.textContent = ` / ${totalPages}`;
+      
+      // Mettre à jour l'affichage du profil
+      elements.userName.textContent = userProfile.name;
+      elements.userLevel.textContent = `Niveau: ${userProfile.level}`;
+      elements.totalScore.textContent = userProfile.totalScore;
+      elements.userAvatar.textContent = userProfile.name.substring(0, 2).toUpperCase();
     }
 
-    /* === Synthèse vocale === */
+    function saveProfile() {
+      localStorage.setItem('spellingProfile', JSON.stringify(userProfile));
+    }
+
+    // ==================== GESTION DES PAGES ====================
+    function initPageSelect() {
+      elements.pageSelect.innerHTML = '';
+      for (let i = 1; i <= totalPages; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Page ${i}`;
+        elements.pageSelect.appendChild(option);
+      }
+      elements.totalPagesLabel.textContent = ` / ${totalPages}`;
+    }
+
+    function pageStartIndex(page) {
+      return (page - 1) * pageSize;
+    }
+
+    function pageEndIndex(page) {
+      return Math.min(page * pageSize - 1, words.length - 1);
+    }
+
+    function updateProgress() {
+      const pageStart = pageStartIndex(currentPage);
+      const pageEnd = pageEndIndex(currentPage);
+      const position = currentWordIndex - pageStart + 1;
+      const totalInPage = pageEnd - pageStart + 1;
+      
+      elements.progress.textContent = `Question ${position}/${totalInPage} (Page ${currentPage}/${totalPages})`;
+      
+      // Mettre à jour la barre de progression
+      const progressPercent = (position / totalInPage) * 100;
+      elements.progressFill.style.width = `${progressPercent}%`;
+    }
+
+    function goToPage(page) {
+      currentPage = Math.max(1, Math.min(totalPages, page));
+      currentWordIndex = pageStartIndex(currentPage);
+      elements.pageSelect.value = currentPage;
+      playWord();
+    }
+
+    // ==================== SYNTHÈSE VOCALE ====================
     function speakWord(word, rate = speechRate) {
-      if (!('speechSynthesis' in window)) {
-        message.textContent = "La synthèse vocale n'est pas prise en charge sur ce navigateur.";
+      if (!window.speechSynthesis) {
+        showMessage("La synthèse vocale n'est pas supportée par votre navigateur.", "error");
         return;
       }
-      speechSynthesis.cancel();
+      
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = "fr-FR";
+      utterance.lang = 'fr-FR';
       utterance.rate = rate;
-      speechSynthesis.speak(utterance);
+      utterance.volume = 1;
+      window.speechSynthesis.speak(utterance);
     }
 
-    /* === Jeu === */
+    // ==================== LOGIQUE DU JEU ====================
+    function startNewSession() {
+      score = 0;
+      correctAnswers = 0;
+      totalAttempts = 0;
+      currentStreak = 0;
+      responseTimes = [];
+      exerciseCompleted = false;
+      sessionStartTime = Date.now();
+      elements.btnSaveScore.disabled = false;
+      elements.btnSaveScore.textContent = '💾 Enregistrer Score';
+      
+      goToPage(1);
+      showMessage("Nouvelle session démarrée ! Bonne chance !", "info");
+    }
+
     function playWord() {
+      if (exerciseCompleted) return;
+      
       const word = words[currentWordIndex];
-      wordDisplay.textContent = "";
+      elements.wordDisplay.textContent = '?'.repeat(word.length);
       speakWord(word);
-      message.textContent = "Écoutez attentivement et écrivez le mot.";
-      message.style.color = "#fff";
-      answerInput.value = "";
-      answerInput.disabled = false;
-      answerInput.focus();
+      
+      showMessage("Écoutez attentivement puis écrivez le mot", "info");
+      elements.answer.value = '';
+      elements.answer.disabled = false;
+      elements.answer.focus();
+      
       updateProgress();
-    }
-
-    function playWordSlow() { speechRate = Math.max(0.5, speechRate - 0.25); playWord(); }
-    function playWordFast() { speechRate = Math.min(2, speechRate + 0.25); playWord(); }
-    function repeatWord()   { playWord(); }
-
-    function normalize(str){
-      return str.trim().toLowerCase();
+      startResponseTimer();
     }
 
     function checkAnswer() {
-      const userAnswer = normalize(answerInput.value);
+      if (exerciseCompleted) return;
+      
+      const userAnswer = normalize(elements.answer.value);
       const correctAnswer = normalize(words[currentWordIndex]);
+      const timeTaken = stopResponseTimer();
+      
+      totalAttempts++;
+      
       if (userAnswer === correctAnswer) {
-        message.textContent = "✅ Correct !";
-        message.style.color = "#00e676";
-        wordDisplay.textContent = correctAnswer;
-        setTimeout(() => { nextWord(); }, 900);
+        handleCorrectAnswer(correctAnswer, timeTaken);
       } else {
-        message.textContent = "❌ Incorrect, écoutez l'orthographe lettre par lettre.";
-        message.style.color = "#ff5252";
-        spellWord(correctAnswer);
+        handleIncorrectAnswer(correctAnswer);
       }
+      
+      updateSessionStats();
+    }
+
+    function handleCorrectAnswer(correctAnswer, timeTaken) {
+      const points = calculatePoints(correctAnswer.length, timeTaken, currentStreak);
+      score += points;
+      correctAnswers++;
+      currentStreak++;
+      bestStreak = Math.max(bestStreak, currentStreak);
+      
+      elements.wordDisplay.textContent = correctAnswer;
+      showMessage(`✅ Correct ! +${points} points (Série: ${currentStreak})`, "success");
+      
+      elements.answer.disabled = true;
+      setTimeout(nextWord, 1500);
+    }
+
+    function handleIncorrectAnswer(correctAnswer) {
+      currentStreak = 0;
+      showMessage("❌ Incorrect. Écoutez l'orthographe...", "error");
+      spellWord(correctAnswer);
+    }
+
+    function calculatePoints(wordLength, timeTaken, streak) {
+      // Points de base selon la longueur
+      let points = Math.min(wordLength * 3, 30);
+      
+      // Bonus de rapidité
+      if (timeTaken < 3) points += 20;
+      else if (timeTaken < 5) points += 15;
+      else if (timeTaken < 8) points += 10;
+      
+      // Bonus de série
+      if (streak >= 5) points += 10;
+      if (streak >= 10) points += 15;
+      
+      return points;
     }
 
     function spellWord(word) {
-      speechSynthesis.cancel();
-      let letters = [...word.replace(/[-\s]/g, "")];
-      let i = 0;
+      window.speechSynthesis.cancel();
+      const letters = word.split('');
+      let index = 0;
+      
       function spellNext() {
-        if (i < letters.length) {
-          const utterance = new SpeechSynthesisUtterance(letters[i]);
-          utterance.lang = "fr-FR";
-          utterance.rate = 0.6;
+        if (index < letters.length) {
+          const utterance = new SpeechSynthesisUtterance(letters[index]);
+          utterance.lang = 'fr-FR';
+          utterance.rate = 0.5;
           utterance.onend = () => {
-            i++;
-            setTimeout(spellNext, 350);
+            index++;
+            setTimeout(spellNext, 300);
           };
-          speechSynthesis.speak(utterance);
+          window.speechSynthesis.speak(utterance);
         } else {
-          message.textContent = "Réessayez d'écrire le mot.";
-          message.style.color = "#fff";
-          answerInput.value = "";
-          answerInput.focus();
+          showMessage("Réessayez d'écrire le mot", "info");
+          elements.answer.value = '';
+          elements.answer.focus();
+          startResponseTimer();
         }
       }
+      
       spellNext();
     }
 
     function nextWord() {
-      const end = pageEndIndex(currentPage);
-      if (currentWordIndex < end) {
+      const pageEnd = pageEndIndex(currentPage);
+      if (currentWordIndex < pageEnd) {
         currentWordIndex++;
         playWord();
       } else {
-        message.textContent = `🎉 Fin de la page ${currentPage}. Choisissez une autre page pour continuer.`;
-        answerInput.disabled = true;
+        endExercise();
       }
     }
 
     function prevWord() {
-      const start = pageStartIndex(currentPage);
-      if (currentWordIndex > start) {
+      const pageStart = pageStartIndex(currentPage);
+      if (currentWordIndex > pageStart) {
         currentWordIndex--;
-        message.textContent = "";
         playWord();
       }
     }
 
-    /* === Navigation de pages === */
-    function goToPage(p){
-      const page = Math.max(1, Math.min(totalPages, p));
-      currentPage = page;
-      currentWordIndex = pageStartIndex(currentPage);
-      updatePageSelect();
-      message.textContent = "";
-      playWord();
+    function endExercise() {
+      exerciseCompleted = true;
+      elements.answer.disabled = true;
+      
+      const sessionDuration = ((Date.now() - sessionStartTime) / 1000 / 60).toFixed(1);
+      const accuracy = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
+      
+      showMessage(
+        `🎉 Exercice terminé ! Score: ${score} points | Précision: ${accuracy}% | Durée: ${sessionDuration}min`,
+        "success"
+      );
     }
 
-    btnPrevPage.addEventListener("click", () => {
-      if (currentPage > 1) goToPage(currentPage - 1);
-    });
-    btnNextPage.addEventListener("click", () => {
-      if (currentPage < totalPages) goToPage(currentPage + 1);
-    });
-    pageSelect.addEventListener("change", (e) => {
-      const p = parseInt(e.target.value, 10);
-      goToPage(p);
-    });
+    // ==================== GESTION DU TEMPS ====================
+    let responseStartTime = null;
 
-    /* === Boutons === */
-    btnBack.addEventListener("click", prevWord);
-    btnPlay.addEventListener("click", playWord);
-    btnSlow.addEventListener("click", playWordSlow);
-    btnFast.addEventListener("click", playWordFast);
-    btnRepeat.addEventListener("click", repeatWord);
-    btnSkip.addEventListener("click", nextWord);
+    function startResponseTimer() {
+      responseStartTime = Date.now();
+    }
 
-    answerInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") checkAnswer();
-    });
+    function stopResponseTimer() {
+      if (!responseStartTime) return 0;
+      const timeTaken = (Date.now() - responseStartTime) / 1000;
+      responseTimes.push(timeTaken);
+      responseStartTime = null;
+      return timeTaken;
+    }
 
-    /* === Démarrage === */
-    updatePageSelect();
-    window.addEventListener("load", () => goToPage(1));
+    // ==================== STATISTIQUES ====================
+    function updateSessionStats() {
+      // Mise à jour en temps réel
+      const accuracy = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
+      
+      // Mettre à jour l'affichage global
+      updateGlobalStats();
+    }
+
+    function updateGlobalStats() {
+      const stats = [
+        { value: score, label: 'SCORE ACTUEL', color: '#00e676' },
+        { value: correctAnswers, label: 'RÉUSSIS', color: '#2575fc' },
+        { value: `${totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0}%`, label: 'PRÉCISION', color: '#ffb300' },
+        { value: currentStreak, label: 'SÉRIE', color: '#e91e63' }
+      ];
+      
+      elements.globalStats.innerHTML = stats.map(stat => `
+        <div class="stat-card">
+          <div class="stat-value" style="color: ${stat.color}">${stat.value}</div>
+          <div class="stat-label">${stat.label}</div>
+        </div>
+      `).join('');
+    }
+
+    // ==================== GESTION DES SCORES ====================
+    function saveScore() {
+      if (score === 0) {
+        showMessage("Aucun score à enregistrer", "warning");
+        return;
+      }
+      
+      const sessionData = {
+        date: new Date().toISOString(),
+        score: score,
+        correctAnswers: correctAnswers,
+        totalAttempts: totalAttempts,
+        accuracy: Math.round((correctAnswers / totalAttempts) * 100),
+        streak: bestStreak,
+        page: currentPage,
+        duration: ((Date.now() - sessionStartTime) / 1000).toFixed(0)
+      };
+      
+      // Mettre à jour le profil
+      userProfile.totalScore += score;
+      userProfile.sessions++;
+      userProfile.totalCorrect += correctAnswers;
+      userProfile.totalAttempts += totalAttempts;
+      userProfile.bestScore = Math.max(userProfile.bestScore, score);
+      userProfile.bestStreak = Math.max(userProfile.bestStreak, bestStreak);
+      
+      // Mettre à jour le niveau
+      updateUserLevel();
+      
+      // Sauvegarder le profil
+      saveProfile();
+      
+      // Sauvegarder l'historique
+      saveToHistory(sessionData);
+      
+      // Mettre à jour l'affichage
+      elements.totalScore.textContent = userProfile.totalScore;
+      elements.btnSaveScore.disabled = true;
+      elements.btnSaveScore.textContent = '✅ Score Enregistré';
+      
+      showMessage(`Score enregistré avec succès ! Total: ${userProfile.totalScore} points`, "success");
+    }
+
+    function updateUserLevel() {
+      const total = userProfile.totalScore;
+      if (total >= 5000) userProfile.level = "Expert";
+      else if (total >= 2000) userProfile.level = "Avancé";
+      else if (total >= 500) userProfile.level = "Intermédiaire";
+      else userProfile.level = "Débutant";
+      
+      elements.userLevel.textContent = `Niveau: ${userProfile.level}`;
+    }
+
+    function saveToHistory(sessionData) {
+      let history = JSON.parse(localStorage.getItem('spellingHistory') || '[]');
+      history.unshift(sessionData);
+      if (history.length > 20) history = history.slice(0, 20); // Garder seulement 20 entrées
+      localStorage.setItem('spellingHistory', JSON.stringify(history));
+      
+      loadScoreHistory();
+    }
+
+    function loadScoreHistory() {
+      const history = JSON.parse(localStorage.getItem('spellingHistory') || '[]');
+      
+      if (history.length === 0) {
+        elements.historyList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Aucun score enregistré</p>';
+        return;
+      }
+      
+      elements.historyList.innerHTML = history.map(session => `
+        <div class="history-item">
+          <div>
+            <div class="history-score">${session.score} points</div>
+            <div>${session.correctAnswers}/${session.totalAttempts} (${session.accuracy}%)</div>
+          </div>
+          <div class="history-date">${formatDate(session.date)}</div>
+        </div>
+      `).join('');
+    }
+
+    function formatDate(isoString) {
+      const date = new Date(isoString);
+      return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // ==================== UTILITAIRES ====================
+    function normalize(str) {
+      return str.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function showMessage(text, type = 'info') {
+      elements.message.textContent = text;
+      elements.message.style.background = type === 'success' ? 'rgba(0, 230, 118, 0.2)' :
+                                         type === 'error' ? 'rgba(255, 82, 82, 0.2)' :
+                                         type === 'warning' ? 'rgba(255, 179, 0, 0.2)' :
+                                         'rgba(255, 255, 255, 0.1)';
+      elements.message.style.color = type === 'success' ? '#00e676' :
+                                     type === 'error' ? '#ff5252' :
+                                     type === 'warning' ? '#ffb300' : '#fff';
+    }
+
+    function giveHint() {
+      if (exerciseCompleted) return;
+      
+      const word = words[currentWordIndex];
+      const hintLength = Math.ceil(word.length / 2);
+      const hint = word.substring(0, hintLength) + '_'.repeat(word.length - hintLength);
+      
+      elements.wordDisplay.textContent = hint;
+      showMessage(`Indice: ${hint}`, "info");
+      
+      // Pénalité de score pour l'indice
+      score = Math.max(0, score - 10);
+      updateGlobalStats();
+    }
+
+    // ==================== ÉVÉNEMENTS ====================
+    function setupEventListeners() {
+      // Navigation
+      elements.btnPrevPage.addEventListener('click', () => goToPage(currentPage - 1));
+      elements.btnNextPage.addEventListener('click', () => goToPage(currentPage + 1));
+      elements.pageSelect.addEventListener('change', (e) => goToPage(parseInt(e.target.value)));
+      
+      // Contrôles audio
+      elements.btnPlay.addEventListener('click', playWord);
+      elements.btnSlow.addEventListener('click', () => {
+        speechRate = Math.max(0.5, speechRate - 0.25);
+        playWord();
+      });
+      elements.btnFast.addEventListener('click', () => {
+        speechRate = Math.min(2, speechRate + 0.25);
+        playWord();
+      });
+      elements.btnRepeat.addEventListener('click', playWord);
+      elements.btnSkip.addEventListener('click', nextWord);
+      elements.btnHint.addEventListener('click', giveHint);
+      
+      // Actions
+      elements.btnSaveScore.addEventListener('click', saveScore);
+      elements.btnNewSession.addEventListener('click', startNewSession);
+      
+      // Saisie
+      elements.answer.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkAnswer();
+      });
+      
+      // Navigation clavier
+      document.addEventListener('keydown', (e) => {
+        if (e.key === ' ') {
+          e.preventDefault();
+          playWord();
+        } else if (e.key === 'ArrowRight' && e.ctrlKey) {
+          nextWord();
+        } else if (e.key === 'ArrowLeft' && e.ctrlKey) {
+          prevWord();
+        }
+      });
+    }
+
+    // ==================== DÉMARRAGE ====================
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
+
