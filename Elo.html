@@ -1066,6 +1066,84 @@
             flex-direction: column;
         }
         
+        /* Section Histoire des Concours */
+        .histoire-concours {
+            background-color: var(--light);
+        }
+        
+        .histoire-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .histoire-texte {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .histoire-texte .content-block {
+            background: linear-gradient(135deg, var(--primary-lighter), white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid var(--accent);
+        }
+        
+        .histoire-texte h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .histoire-texte p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .histoire-visuel {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .histoire-cercle {
+            background: linear-gradient(135deg, var(--primary-lighter), white);
+            border-radius: 50%;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            border: 5px solid var(--accent);
+        }
+        
+        .histoire-cercle i {
+            font-size: 5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .histoire-cercle span {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .histoire-cercle small {
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+        
         /* Formulaire d'inscription */
         .inscription {
             background-color: var(--light-gray);
@@ -1478,6 +1556,23 @@
             
             .fondateur-info, .comite-membres {
                 grid-template-columns: 1fr;
+            }
+            
+            .histoire-container {
+                flex-direction: column;
+            }
+            
+            .histoire-cercle {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .histoire-cercle i {
+                font-size: 3.5rem;
+            }
+            
+            .histoire-cercle span {
+                font-size: 2rem;
             }
         }
         
@@ -1955,6 +2050,51 @@
                             <li><i class="fas fa-check"></i> Forums de carrière</li>
                             <li><i class="fas fa-check"></i> Visites d'entreprises et institutions</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Histoire des Concours (NOUVELLE) -->
+    <section class="histoire-concours section-padding" id="histoire-concours">
+        <div class="container">
+            <div class="section-title">
+                <h2><span class="title-decoration">L'histoire de nos concours</span></h2>
+                <p>Découvrez comment Excellentia Academia a développé des concours d'excellence dans les domaines scientifique, culturel et académique.</p>
+            </div>
+            
+            <div class="histoire-container">
+                <div class="histoire-texte">
+                    <div class="content-block">
+                        <h3>
+                            <i class="fas fa-trophy" style="color: var(--accent);"></i> 
+                            Une tradition d'excellence
+                        </h3>
+                        <p>
+                            Depuis sa création, Excellentia Academia a placé l'organisation de concours au cœur de sa mission. 
+                            Le premier concours d'éloquence inter-facultés, lancé en 2022, a rassemblé plus de 200 participants issus des 13 facultés de l'UNIKIN. 
+                            Devant ce succès, nous avons étendu nos activités à des concours scientifiques (challenge de l'innovation, olympiades) et culturels (concours de poésie, de dissertation, de théâtre).
+                        </p>
+                        <p>
+                            Aujourd'hui, ces événements rythment l'année académique et révèlent chaque année de nouveaux talents, 
+                            grâce à l'engagement de nos ambassadeurs, du comité directeur et du soutien des autorités universitaires. 
+                            Le concours d'éloquence est devenu un rendez-vous incontournable, avec des finales qui se tiennent dans l'amphithéâtre principal de l'université.
+                        </p>
+                        <p>
+                            Pour la prochaine édition, nous préparons des surprises et des innovations qui feront de ce concours un moment encore plus mémorable.
+                        </p>
+                        <a href="concours.html" class="btn btn-success" style="margin-top: 20px; width: 100%; font-size: 1.1rem; padding: 15px;">
+                            <i class="fas fa-external-link-alt"></i> Découvrir la page officielle du concours
+                        </a>
+                    </div>
+                </div>
+                <div class="histoire-visuel">
+                    <div class="histoire-cercle">
+                        <i class="fas fa-trophy"></i>
+                        <span>2022</span>
+                        <small>Première édition</small>
+                        <span style="font-size: 1.5rem; margin-top: 5px; color: var(--primary);">+200 participants</span>
                     </div>
                 </div>
             </div>
