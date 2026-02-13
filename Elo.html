@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Excellentia Academia - Au-delà de l'excellence académique</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -230,11 +230,11 @@
         }
         
         .logo-image {
-            height: 50px;
-            width: 50px;
-            border-radius: 10px;
+            height: 70px;
+            width: 70px;
+            border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--primary);
+            border: 3px solid var(--primary);
             box-shadow: var(--shadow-sm);
         }
         
@@ -281,25 +281,26 @@
         /* Boutons d'action header */
         .action-buttons {
             display: flex;
-            gap: 12px;
-            margin-right: 30px;
+            gap: 8px;
+            margin-right: 20px;
+            flex-wrap: wrap;
         }
         
         .action-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background-color: var(--primary);
             color: white;
             border: none;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: var(--transition);
             text-decoration: none;
             text-align: center;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             white-space: nowrap;
             box-shadow: var(--shadow-sm);
         }
@@ -351,6 +352,24 @@
             background-color: #7b1fa2;
         }
         
+        /* Nouveau bouton Activité en cours */
+        .action-btn.en-cours {
+            background-color: #ff5722;
+            animation: pulse-orange 1.5s infinite;
+            position: relative;
+        }
+        
+        .action-btn.en-cours:hover {
+            background-color: #e64a19;
+            animation: none;
+        }
+        
+        @keyframes pulse-orange {
+            0% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 87, 34, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
+        }
+        
         .nav-wrapper {
             display: flex;
             align-items: center;
@@ -397,12 +416,12 @@
         
         .mobile-menu-btn {
             display: none;
-            font-size: 1.6rem;
+            font-size: 2rem;
             background: none;
             border: none;
             color: var(--primary);
             cursor: pointer;
-            padding: 5px;
+            padding: 5px 10px;
             border-radius: 5px;
             transition: var(--transition);
         }
@@ -1210,7 +1229,7 @@
         .footer-logo-image {
             height: 60px;
             width: 60px;
-            border-radius: 10px;
+            border-radius: 50%;
             object-fit: cover;
             border: 2px solid white;
             margin-bottom: 20px;
@@ -1380,12 +1399,12 @@
             }
             
             .action-buttons {
-                margin-right: 20px;
+                margin-right: 10px;
             }
             
             .action-btn {
-                padding: 9px 18px;
-                font-size: 0.8rem;
+                padding: 8px 12px;
+                font-size: 0.75rem;
             }
         }
         
@@ -1414,6 +1433,30 @@
             
             .nav-links {
                 display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+                margin-left: 0;
+            }
+            
+            .nav-links a {
+                display: block;
+                padding: 10px;
+                text-align: center;
             }
             
             .mobile-menu-btn {
@@ -1479,6 +1522,23 @@
             .fondateur-info, .comite-membres {
                 grid-template-columns: 1fr;
             }
+            
+            .logo-image {
+                height: 60px;
+                width: 60px;
+            }
+            
+            .logo-main {
+                font-size: 1.5rem;
+            }
+            
+            .logo-sub {
+                font-size: 0.8rem;
+            }
+            
+            .logo-slogan {
+                font-size: 0.7rem;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1516,6 +1576,23 @@
                 font-size: 1.1rem;
                 padding: 15px;
             }
+            
+            .logo-image {
+                height: 50px;
+                width: 50px;
+            }
+            
+            .logo-main {
+                font-size: 1.2rem;
+            }
+            
+            .logo-sub {
+                font-size: 0.7rem;
+            }
+            
+            .logo-slogan {
+                font-size: 0.6rem;
+            }
         }
     </style>
 </head>
@@ -1526,7 +1603,7 @@
             <a href="#" class="logo">
                 <!-- Logo de la structure -->
                 <div class="logo-image-container">
-                    <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" class="logo-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/50/1a237e/ffffff?text=EA'; this.alt='Logo Excellentia Academia'">
+                    <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" class="logo-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/70/1a237e/ffffff?text=EA'; this.alt='Logo Excellentia Academia'">
                 </div>
                 <div class="logo-text">
                     <div class="logo-main">Excellentia</div>
@@ -1536,7 +1613,7 @@
             </a>
             
             <div class="nav-wrapper">
-                <!-- Boutons d'action - CORRIGÉS POUR FONCTIONNER -->
+                <!-- Boutons d'action (desktop) -->
                 <div class="action-buttons">
                     <a href="#formations" class="action-btn formation">
                         <i class="fas fa-chalkboard-teacher"></i>
@@ -1558,25 +1635,37 @@
                         <i class="fas fa-images"></i>
                         Photos
                     </a>
+                    <!-- Nouveau bouton Activité en cours -->
+                    <a href="activite-en-cours.html" class="action-btn en-cours">
+                        <i class="fas fa-play-circle"></i>
+                        Activité en cours
+                    </a>
                 </div>
                 
                 <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
                 </button>
                 
+                <!-- Menu mobile (s'affiche en colonne) -->
                 <ul class="nav-links" id="navLinks">
                     <li><a href="#accueil">Accueil</a></li>
                     <li><a href="#avantages">Avantages</a></li>
                     <li><a href="#facultes">Facultés</a></li>
                     <li><a href="#activites">Activités</a></li>
-                    <li><a href="#ateliers">Ateliers</a></li>
+                    <li><a href="#ateliers-section">Ateliers</a></li>
                     <li><a href="#inscription">Inscription</a></li>
+                    <!-- Liens supplémentaires pour mobile -->
+                    <li><a href="#formations">Formation</a></li>
+                    <li><a href="#concours">Concours</a></li>
+                    <li><a href="#conferences">Conférences</a></li>
+                    <li><a href="#photos">Photos</a></li>
+                    <li><a href="activite-en-cours.html" class="en-cours-link"><i class="fas fa-play-circle"></i> Activité en cours</a></li>
                 </ul>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Section (identique) -->
     <section class="hero" id="accueil">
         <div class="container">
             <div class="hero-content">
@@ -1668,6 +1757,7 @@
         </div>
     </section>
 
+    <!-- Le reste du site (inchangé) -->
     <!-- Avantages Section -->
     <section class="avantages section-padding" id="avantages">
         <div class="container">
@@ -2193,6 +2283,7 @@
                         <li><a href="#photos"><i class="fas fa-chevron-right"></i> Galerie Photos</a></li>
                         <li><a href="#inscription"><i class="fas fa-chevron-right"></i> Devenir Membre</a></li>
                         <li><a href="concours.html"><i class="fas fa-external-link-alt"></i> Page du Concours</a></li>
+                        <li><a href="activite-en-cours.html"><i class="fas fa-play-circle"></i> Activité en cours</a></li>
                     </ul>
                 </div>
                 
@@ -2213,7 +2304,7 @@
         </div>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- JavaScript (identique, avec facultés) -->
     <script>
         // Données des facultés avec ambassadeurs spécifiés
         const facultiesData = [
